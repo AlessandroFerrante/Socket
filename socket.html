@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>socket.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="socket">Socket</h1>
+<table>
+<thead>
+<tr>
+<th><strong>Component name</strong></th>
+<th>Description</th>
+<th>Utility</th>
+<th>Parameters</th>
+<th>Note</th>
+<th>Tag</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sockfd</code></td>
+<td>descrittore di socket</td>
+<td>identifica la socket</td>
+<td></td>
+<td>numero intero usato per le operazioni con la socket</td>
+<td>#sockfd</td>
+</tr>
+<tr>
+<td><code>struct sockaddr_in</code></td>
+<td>struttura dati</td>
+<td>usato per creare un indirizzo di socket per IPv4.</td>
+<td>usato per <code>local_addr</code> e <code>remote_addr</code></td>
+<td>crea strutture dati quindi gli indirizzi sono strutture che contengono altri dati</td>
+<td>#sockadrr_in</td>
+</tr>
+<tr>
+<td><code>socklen_t</code></td>
+<td>tipo intero</td>
+<td>memorizza la lunghezza degli indirizzi del socket.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>socket(socket family, socket type, protocol);</code></td>
+<td>crea una <strong>socket</strong></td>
+<td>restituisce il <em>descrittore di socket</em> <code>sockfd</code></td>
+<td>#protocolFamily #typeSocket #protocol</td>
+<td><code>sockfd = socket(AF_INET, SOCK_DGRAM, 0);</code></td>
+<td>#socket</td>
+</tr>
+<tr>
+<td><code>PF_INET</code> <code>AF_INET</code></td>
+<td>indica la famiglia di protocolli</td>
+<td>usati in #socket</td>
+<td></td>
+<td></td>
+<td>#protocolFamily</td>
+</tr>
+<tr>
+<td><code>SOCK_DGRAM</code></td>
+<td>indica il tipo di socket per UDP</td>
+<td>usati in #socket</td>
+<td></td>
+<td></td>
+<td>#typeSocket</td>
+</tr>
+<tr>
+<td><code>SOCK_STREAM</code></td>
+<td>indica il tipo di socket per TCP</td>
+<td>usati in #socket</td>
+<td></td>
+<td></td>
+<td>#typeSocket</td>
+</tr>
+<tr>
+<td><code>0</code></td>
+<td>specifica il protocollo da utilizzare in questo caso è automatico</td>
+<td>usato in #socket</td>
+<td></td>
+<td></td>
+<td>#protocol</td>
+</tr>
+<tr>
+<td><code>memset(&amp;local_addr, 0, len);</code></td>
+<td>setta i byte del primo parametro con il secondo parametro, il numero di bit e deciso dal terzo paramtetro</td>
+<td>inizializza a 0 l'indirizzo locale</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="component-name-sockfd"><strong>Component name</strong>: <code>sockfd</code></h3>
+<ul>
+<li><strong>Description</strong>: Descrittore di socket.</li>
+<li><strong>Utility</strong>: Identifica la socket.</li>
+<li><strong>Parameters</strong>: Nessuno.</li>
+<li><strong>Note</strong>: È un numero intero usato per le operazioni con la socket.</li>
+<li><strong>Tag</strong>: #sockfd</li>
+</ul>
+<h3 id="component-name-struct-sockaddrin"><strong>Component name</strong>: <code>struct sockaddr_in</code></h3>
+<ul>
+<li><strong>Description</strong>: <em>Crea strutture dati</em>.</li>
+<li><strong>Utility</strong>: Usato per creare un indirizzo di socket per IPv4.</li>
+<li><strong>Parameters</strong>: Usato per #local_addr e #remote_addr.</li>
+<li><strong>Structure attributes</strong>:
+<ul>
+<li><code>sin_family</code>: Famiglia di indirizzi (IPv4 o IPv6).</li>
+<li><code>sin_port</code>: Numero di porta del socket.</li>
+<li><code>sin_addr</code>: Indirizzo IP del socket.</li>
+</ul>
+</li>
+<li><strong>Note</strong>: Viene utilizzata come tipo di dato per gli indirizzi dei socket, ad esempio nell'associazione di un indirizzo locale a un socket tramite la funzione <code>bind()</code>. Crea strutture dati quindi gli indirizzi sono strutture che contengono altri attributi.</li>
+<li><strong>Tag</strong>: #sockadrr_in</li>
+</ul>
+<h3 id="component-name-socklent"><strong>Component name</strong>: <code>socklen_t</code></h3>
+<ul>
+<li><strong>Description</strong>: Tipo intero.</li>
+<li><strong>Utility</strong>: Memorizza la lunghezza degli indirizzi del socket.</li>
+<li><strong>Parameters</strong>: Nessuno.</li>
+<li><strong>Note</strong>: -</li>
+<li><strong>Tag</strong>: -</li>
+</ul>
+<h3 id="component-name-socket"><strong>Component name</strong>: <code>socket()</code></h3>
+<h4 id="socketsocket-family-socket-type-protocol"><code>socket(socket family, socket type, protocol)</code></h4>
+<ul>
+<li><strong>Description</strong>: Crea un nuovo socket per la comunicazione di rete.</li>
+<li><strong>Utility</strong>: Utilizzata per creare un nuovo socket che può essere utilizzato per la comunicazione di rete, come ad esempio TCP o UDP.  Restituisce il descrittore di socket <code>sockfd</code>.</li>
+<li><strong>Parameters</strong>:
+<ul>
+<li>#protocolFamily, #typeSocket, #protocol.</li>
+<li><code>domain</code>: Dominio del protocollo, che indica il tipo di comunicazione che verrà effettuata (ad esempio, <code>AF_INET</code> per IPv4).</li>
+<li><code>type</code>: Tipo di socket da creare (ad esempio, <code>SOCK_STREAM</code> per TCP o <code>SOCK_DGRAM</code> per UDP).</li>
+<li><code>protocol</code>: Protocollo da utilizzare con il socket (0 per il protocollo predefinito, automatico).</li>
+</ul>
+</li>
+<li><strong>Note</strong>: Restituisce il descrittore del socket appena creato. Se il valore restituito è inferiore a 0, indica un errore nella creazione del socket.</li>
+<li><strong>Examples</strong>:
+<ul>
+<li><code>sockfd = socket(AF_INET, SOCK_DGRAM, 0);</code>.</li>
+<li><code>sockfd = socket(PF_INET, SOCK_STREAM, 0);</code>.</li>
+</ul>
+</li>
+<li><strong>Tag</strong>: #socket</li>
+</ul>
+<h3 id="component-name-pfinet--afinet"><strong>Component name</strong>: <code>PF_INET</code> / <code>AF_INET</code></h3>
+<ul>
+<li><strong>Description</strong>: Indicano la famiglia di protocolli.</li>
+<li><strong>Utility</strong>: Usati in #socket.</li>
+<li><strong>Parameters</strong>: -</li>
+<li><strong>Note</strong>: -</li>
+<li><strong>Tag</strong>: #protocolFamily</li>
+</ul>
+<h3 id="component-name-sockdgram"><strong>Component name</strong>: <code>SOCK_DGRAM</code></h3>
+<ul>
+<li><strong>Description</strong>: Indica il tipo di socket per UDP.</li>
+<li><strong>Utility</strong>: Usati in #socket.</li>
+<li><strong>Parameters</strong>: -</li>
+<li><strong>Note</strong>: -</li>
+<li><strong>Tag</strong>: #typeSocket</li>
+</ul>
+<h3 id="component-name-sockstream"><strong>Component name</strong>: <code>SOCK_STREAM</code></h3>
+<ul>
+<li><strong>Description</strong>: Indica il tipo di socket per TCP.</li>
+<li><strong>Utility</strong>: Usati in #socket.</li>
+<li><strong>Parameters</strong>: -</li>
+<li><strong>Note</strong>: -</li>
+<li><strong>Tag</strong>: #typeSocket</li>
+</ul>
+<h3 id="component-name-0"><strong>Component name</strong>: <code>0</code></h3>
+<ul>
+<li><strong>Description</strong>: Specifica il protocollo da utilizzare in questo caso è automatico.</li>
+<li><strong>Utility</strong>: Usato in #socket.</li>
+<li><strong>Parameters</strong>: -</li>
+<li><strong>Note</strong>: -</li>
+<li><strong>Tag</strong>: #protocol</li>
+</ul>
+<h3 id="component-name-memsetlocaladdr-0-len"><strong>Component name</strong>: <code>memset(&amp;local_addr, 0, len);</code></h3>
+<ul>
+<li><strong>Description</strong>: Setta i byte del primo parametro con il secondo parametro, il numero di bit e deciso dal terzo parametro.</li>
+<li><strong>Utility</strong>: Inizializza a 0 l'indirizzo locale.</li>
+<li><strong>Parameters</strong>:</li>
+<li><strong>Note</strong>: -</li>
+<li><strong>Tag</strong>: -</li>
+<li></li>
+</ul>
+<h3 id="component-name-localaddrsinfamily"><strong>Component name</strong>: <code>local_addr.sin_family</code></h3>
+<ul>
+<li><strong>Description</strong>: Indica il tipo di indirizzo utilizzato (IPv4 o IPv6).</li>
+<li><strong>Utility</strong>: se imposta il campo <code>sin_family</code> della struttura <code>local_addr</code></li>
+<li><strong>Parameters</strong>: con <code>AF_INET</code>, che indica l'utilizzo di IPv4 e con <code>AF_INET6</code>, che indica l'utilizzo di IPv6.</li>
+<li><strong>Note</strong>:</li>
+<li><strong>Tag</strong>:</li>
+</ul>
+<h3 id="component-name-localaddrsinport"><strong>Component name</strong>: <code>local_addr.sin_port</code></h3>
+<ul>
+<li><strong>Description</strong>: Numero di porta del socket.</li>
+<li><strong>Utility</strong>: Imposta il campo <code>sin_port</code> della struttura <code>local_addr</code>.</li>
+<li><strong>Parameters</strong>: numero di porta con <code>htons()</code> che converte il numero della porta da host byte order a network byte order. Host To Network Short</li>
+<li><strong>Note</strong>: la porta viene convertita da stringa a numero intero tramite <code>atoi(argv[1])</code>.</li>
+<li><strong>Tag</strong>:</li>
+</ul>
+<h3 id="component-name-localaddrsinaddr"><strong>Component name</strong>: <code>local_addr.sin_addr</code></h3>
+<ul>
+<li><strong>Description</strong>: Indirizzo IP del socket.</li>
+<li><strong>Utility</strong>: Imposta il campo <code>sin_addr</code> della struttura <code>local_addr</code>.</li>
+<li><strong>Parameters</strong>: <code>htonl(INADDR_ANY)</code>, che imposta l'indirizzo IP a <code>INADDR_ANY</code>, il quale indica al socket di accettare connessioni da qualsiasi indirizzo IP.</li>
+<li><strong>Note</strong>: <code>htonl()</code> converte l'indirizzo IP da host byte order a network byte order.Host To Network Long;</li>
+<li><strong>Tag</strong>:</li>
+</ul>
+<h3 id="component-name-bind"><strong>Component name</strong>: <code>bind()</code></h3>
+<h4 id="int-bindint-sockfd-const-struct-sockaddr-addr-socklent-addrlen"><code>int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);</code></h4>
+<ul>
+<li><strong>Description</strong>: Associa un indirizzo locale a un socket.</li>
+<li><strong>Utility</strong>: Utilizzato per assegnare un indirizzo locale a un socket, come ad esempio un server che desidera accettare connessioni in ingresso su una determinata porta.</li>
+<li><strong>Parameters</strong>:
+<ul>
+<li><code>sockfd</code>: Descrittore del socket da associare all'indirizzo.</li>
+<li><code>(struct sockaddr *)&amp;local_addr</code>: Puntatore alla struttura <code>local_addr</code> castata a un puntatore a <code>struct sockaddr</code>, poiché <code>bind()</code> richiede un puntatore a una struttura <code>sockaddr</code>.</li>
+<li><code>len</code>: Lunghezza dell'indirizzo del socket.</li>
+</ul>
+</li>
+<li><strong>Note</strong>: <em>Valore restituito</em> inferiore a 0, indica un errore nell'esecuzione della funzione <code>bind()</code>.</li>
+<li><strong>Example</strong>: <code>bind(sockfd, (struct sockadrr *)&amp;local_addr, len)</code></li>
+<li><strong>Tag</strong>: -</li>
+</ul>
+<h3 id="component-name-recvfrom"><strong>Component name</strong>: <code>recvfrom()</code></h3>
+<ul>
+<li><strong>Description</strong>: Riceve un messaggio da un socket, consentendo di specificare il mittente.</li>
+<li><strong>Utility</strong>: Utilizzata per ricevere dati da un socket, consentendo di specificare il mittente tramite la struttura <code>remote_addr</code>.</li>
+<li><strong>Parameters</strong>:
+<ul>
+<li><code>sockfd</code>: Descrittore del socket.</li>
+<li><code>buffer</code>: Buffer in cui memorizzare i dati ricevuti.</li>
+<li><code>len</code>: Dimensione del buffer.</li>
+<li><code>flags</code>: Opzioni di ricezione.</li>
+<li><code>(struct sockaddr *)&amp;remote_addr</code>: Puntatore a una struttura <code>sockaddr</code> utilizzato per memorizzare l'indirizzo e la porta del mittente.</li>
+<li><code>&amp;len</code>: Puntatore alla lunghezza dell'indirizzo del mittente.</li>
+</ul>
+</li>
+<li><strong>Note</strong>: in poche paroleascolta il canale,</li>
+<li><strong>Example</strong>: <code>recvfrom(sockfd, buffer, 99, 0, (struct sockaddr *)&amp;remote_addr, &amp;len); </code></li>
+<li><strong>Tag</strong>: -</li>
+</ul>
+<h3 id="component-name-sendto">Component name: <code>sendto()</code></h3>
+<ul>
+<li><strong>Description</strong>: Invia dati tramite un socket a un indirizzo specifico.</li>
+<li><strong>Utility</strong>: Utilizzata per inviare dati tramite un socket UDP al destinatario specificato dalla struttura <code>remote_addr</code>.</li>
+<li><strong>Parameters</strong>:
+<ul>
+<li><code>sockfd</code>: Descrittore del socket.</li>
+<li><code>sendline</code>: Buffer contenente i dati da inviare.</li>
+<li><code>strlen(sendline)</code>: Lunghezza dei dati da inviare.</li>
+<li><code>0</code>: Opzioni di invio.</li>
+<li><code>(struct sockaddr *)&amp;remote_addr</code>: Puntatore a una struttura <code>sockaddr</code> che specifica l'indirizzo e la porta del destinatario.</li>
+<li><code>len</code>: Lunghezza dell'indirizzo del destinatario.</li>
+</ul>
+</li>
+<li><strong>Note</strong>: -</li>
+<li><strong>Tag</strong>: -</li>
+</ul>
+<h3 id="component-name-inetntoa"><strong>Component name</strong>: <code>inet_ntoa()</code></h3>
+<ul>
+<li><strong>Description</strong>: Converte un<code> indirizzo IPv4</code> da numerico a formato stringa. Network To Address.</li>
+<li><strong>Utility</strong>: Utilizzata per convertire l'<code>indirizzo IP</code> memorizzato nella struttura <code>remote_addr</code> da formato numerico a formato stringa.</li>
+<li><strong>Parameters</strong>: L'indirizzo IPv4 memorizzato nella struttura <code>remote_addr</code>.</li>
+<li><strong>Note</strong>: Restituisce una stringa che rappresenta l'indirizzo IP in formato leggibile.</li>
+<li><strong>Tag</strong>: -</li>
+</ul>
+<h3 id="component-name-ntohs"><strong>Component name</strong>: <code>ntohs()</code></h3>
+<ul>
+<li><strong>Description</strong>: Converte un <code>numero di porta</code> da network byte order a host byte order;  Network To Host.</li>
+<li><strong>Utility</strong>: Utilizzata per convertire il <code>numero di porta </code>memorizzato nella struttura <code>remote_addr</code> da network byte order a host byte order, formato leggibile.</li>
+<li><strong>Parameters</strong>: Il numero di porta memorizzato nella struttura <code>remote_addr</code>.</li>
+<li><strong>Note</strong>: Restituisce il numero di porta in host byte order, in formato leggibile.</li>
+<li><strong>Tag</strong>: -</li>
+</ul>
+<h3 id="component-name-close">Component name: <code>close()</code></h3>
+<ul>
+<li><strong>Description</strong>: Chiude un descrittore di file o un socket.</li>
+<li><strong>Utility</strong>: Utilizzata per rilasciare le risorse associate a un descrittore di file o a un socket e interrompere la comunicazione attraverso il socket.</li>
+<li><strong>Parameters</strong>:
+<ul>
+<li><code>sockfd</code>: Descrittore del socket da chiudere.</li>
+</ul>
+</li>
+<li><strong>Note</strong>: Dopo aver chiuso un socket, non è più possibile utilizzarlo per inviare o ricevere dati.</li>
+<li><strong>Tag</strong>: -</li>
+</ul>
+<h3 id="component-name-inetpton">Component name: <code>inet_pton()</code></h3>
+<ul>
+<li><strong>Description</strong>: Converte un indirizzo IP da formato testuale a formato binario.</li>
+<li><strong>Utility</strong>: Utilizzata per convertire un indirizzo IP specificato in formato testuale (es. &quot;192.168.1.1&quot;) in un formato binario appropriato per essere memorizzato nella struttura <code>sockaddr_in</code>.</li>
+<li><strong>Parameters</strong>:
+<ul>
+<li><code>AF_INET</code>: Famiglia di indirizzi IP (IPv4).</li>
+<li><code>argv[1]</code>: Stringa che rappresenta l'indirizzo IP in formato testuale.</li>
+<li><code>&amp;(dest_addr.sin_addr)</code>: Puntatore al campo <code>sin_addr</code> della struttura <code>dest_addr</code> in cui verrà memorizzato l'indirizzo IP convertito.</li>
+</ul>
+</li>
+<li><strong>Note</strong>: Restituisce 1 in caso di successo e 0 se l'indirizzo non è valido o -1 in caso di errore.</li>
+<li><strong>Tag</strong>: -</li>
+</ul>
+<h3 id="component-name-inetntop">Component name: <code>inet_ntop()</code></h3>
+<ul>
+<li><strong>Description</strong>: Converte un indirizzo IP da formato binario a formato testuale.</li>
+<li><strong>Utility</strong>: Utilizzata per convertire un indirizzo IPv6 dalla sua rappresentazione binaria nella struttura <code>sockaddr_in6</code> in un formato di stringa leggibile.</li>
+<li><strong>Parameters</strong>:
+<ul>
+<li><code>AF_INET6</code>: Famiglia di indirizzi IP (IPv6).</li>
+<li><code>&amp;(remote_addr.sin6_addr)</code>: Puntatore al campo <code>sin6_addr</code> della struttura <code>remote_addr</code>, contenente l'indirizzo IPv6.</li>
+<li><code>ipv6_addr</code>: Buffer in cui memorizzare l'indirizzo IPv6 in formato testuale.</li>
+<li><code>INET6_ADDRSTRLEN</code>: Lunghezza massima della stringa IPv6.</li>
+</ul>
+</li>
+<li><strong>Note</strong>: Restituisce un puntatore a <code>ipv6_addr</code> se la conversione ha successo, altrimenti restituisce <code>NULL</code>.</li>
+<li><strong>Tag</strong>: -</li>
+</ul>
+<p><a href="https://alessandroferrante.net">Alessandro Ferrante</a></p>
+
+</body>
+</html>
